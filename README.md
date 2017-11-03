@@ -23,5 +23,5 @@ The program `rtfm` is a terminal program that takes no arguments. Enter
 ```
 $ rtfm
 ```
-in the terminal or console and it will produce a pointer to where to find
+in the terminal or command line and it will produce a pointer to where to find
 documentation to solve your computer problems.

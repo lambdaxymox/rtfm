@@ -1,6 +1,6 @@
 [package]
 name = "rtfm"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Stallmanifold <stallmanifold@gmail.com>"]
 
 [dependencies]
