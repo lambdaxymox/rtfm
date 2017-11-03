@@ -1,2 +1,0 @@
-[build]
-rustflags = ["opt-level=2"]
