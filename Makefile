@@ -12,14 +12,14 @@ DOCS := $(RELEASE_ROOT)/$(DOC_TARGET)
 all: $(RTFM)
 
 clean:
-	cargo clean
+	@cargo clean
 	@rm -rf BUILD_ROOT
 
 default: all
 
 install:
-	@cp "$(RTFM)" "/usr/local/bin"
-	@cp "$(DOCS)" "/usr/local/man/man1"
+	cp "$(RTFM)" "/usr/local/bin"
+	cp "$(DOCS)" "/usr/local/man/man1"
 
 
 $(RTFM):
