@@ -3,7 +3,7 @@ RELEASE_ROOT := $(BUILD_ROOT)/release
 DOC_ROOT := docs
 DOC_SOURCE := rtfm.1
 DOC_TARGET := rtfm.1.gz
-RTFM := RELEASE_ROOT/rtfm
+RTFM := $(RELEASE_ROOT)/rtfm
 DOCS := $(RELEASE_ROOT)/$(DOC_TARGET)
 
 
@@ -19,7 +19,7 @@ default: all
 
 install:
 	cp "$(RTFM)" "/usr/local/bin"
-	cp "$(DOCS)" "/usr/local/man/man1"
+	cp "$(DOCS)" "/usr/local/share/man/man1"
 
 
 $(RTFM):
