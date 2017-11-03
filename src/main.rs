@@ -1,7 +1,7 @@
 /*
  *    RTFM is an open source program for printing a friendly reminder
  *    any time you have a question about a program on your computer system,
- *    or possibly a piece of third party software you may be working with.
+ *    or a piece of third party software you may be working with.
  *    It will even issue a friendly reminder about how to use RTFM itself.
  *
  *    Copyright (C) 2017  Christopher Blanchard
