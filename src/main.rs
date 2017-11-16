@@ -23,13 +23,15 @@
 extern crate rand;
 
 
-const STRINGS: [&str; 6] = [
+const STRINGS: [&str; 8] = [
     "RTFM!",
     "RTFM Noob!",
     "Seriously, RTFM!",
     "RTFM Already!",
     "Argh! Just RTFM! Do it NOW!",
     "Nyaaaagh! The manual, read it now!",
+    "sudo rtfm.",
+    "There is this wonderful thing you could try reading called the manual."
 ];
 
 fn main() {
