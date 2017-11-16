@@ -31,7 +31,7 @@ const STRINGS: [&str; 8] = [
     "Argh! Just RTFM! Do it NOW!",
     "Nyaaaagh! The manual, read it now!",
     "sudo rtfm.",
-    "There is this wonderful thing you could try reading called the manual."
+    "There is this wonderful thing you could try reading called the \"manual\"."
 ];
 
 fn main() {
