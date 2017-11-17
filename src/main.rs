@@ -55,7 +55,10 @@ fn parse_args(args: &[String]) -> TerminalAction {
 }
 
 fn run_help_page() {
-    unimplemented!()
+    println!("There is this wonderful thing you could \
+              try reading called the \"manual\".");
+    println!("Try running:");
+    println!("`rtfm rtfm` or `man rtfm`.");
 }
 
 fn run_default_message() {
