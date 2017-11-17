@@ -5,6 +5,7 @@ DOC_SOURCE := rtfm.1
 DOC_TARGET := rtfm.1.gz
 RTFM := $(RELEASE_ROOT)/rtfm
 DOCS := $(RELEASE_ROOT)/$(DOC_TARGET)
+INSTALL_PATH := /usr/local
 
 
 .PHONY: all clean default install
@@ -18,8 +19,8 @@ clean:
 default: all
 
 install:
-	cp "$(RTFM)" "/usr/local/bin"
-	cp "$(DOCS)" "/usr/local/share/man/man1"
+	cp "$(RTFM)" "$(INSTALL_PATH)/bin"
+	cp "$(DOCS)" "$(INSTALL_PATH)/share/man/man1"
 
 
 $(RTFM):
