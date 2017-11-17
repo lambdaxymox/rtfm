@@ -22,6 +22,8 @@
  */
 extern crate rand;
 
+use std::env;
+
 
 const STRINGS: [&str; 8] = [
     "RTFM!",
@@ -30,11 +32,59 @@ const STRINGS: [&str; 8] = [
     "RTFM Already!",
     "Argh! Just RTFM! Do it NOW!",
     "Nyaaaagh! The manual, read it now!",
-    "sudo rtfm.",
+    "Sudo read the manual.",
     "There is this wonderful thing you could try reading called the \"manual\"."
 ];
 
-fn main() {
+#[derive(Clone, PartialEq, Eq)]
+enum TerminalAction {
+    DefaultMessage,
+    FetchManual(String),
+    HelpPage,
+}
+
+fn parse_args(args: &[String]) -> TerminalAction {
+    if args.len() < 2 {
+        return TerminalAction::DefaultMessage;
+    }
+    if args.contains(&String::from("--help")) || args.contains(&String::from("-h")) {
+        return TerminalAction::HelpPage;
+    }
+
+    TerminalAction::FetchManual(args[1].clone())
+}
+
+fn run_help_page() {
+
+}
+
+fn run_default_message() {
     let i = rand::random::<usize>() % STRINGS.len();
     println!("{}", STRINGS[i]);
+}
+
+fn run_fetch_manual(program_name: &str) {
+
+}
+
+fn run_action(action: &TerminalAction) {
+    match action {
+        &TerminalAction::DefaultMessage => {
+            run_default_message();
+        }
+        &TerminalAction::FetchManual(ref program_name) => {
+            run_fetch_manual(&program_name)
+        }
+        &TerminalAction::HelpPage => {
+            run_help_page()
+        }
+    }
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let action = parse_args(&args);
+    run_action(&action);
+
+
 }
