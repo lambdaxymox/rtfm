@@ -26,7 +26,7 @@ use std::process;
 use std::env;
 
 
-const STRINGS: [&str; 8] = [
+const STRINGS: [&str; 9] = [
     "RTFM!",
     "RTFM Noob!",
     "Seriously, RTFM!",
@@ -34,6 +34,7 @@ const STRINGS: [&str; 8] = [
     "Argh! Just RTFM! Do it NOW!",
     "Nyaaaagh! The manual, read it now!",
     "Sudo read the manual.",
+    "Sudo read the friendly manual.",
     "There is this wonderful thing you could try reading called the \"manual\"."
 ];
 
