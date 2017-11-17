@@ -55,7 +55,7 @@ fn parse_args(args: &[String]) -> TerminalAction {
 }
 
 fn run_help_page() {
-
+    unimplemented!()
 }
 
 fn run_default_message() {
@@ -64,7 +64,7 @@ fn run_default_message() {
 }
 
 fn run_fetch_manual(program_name: &str) {
-
+    unimplemented!();
 }
 
 fn run_action(action: &TerminalAction) {
@@ -85,6 +85,4 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let action = parse_args(&args);
     run_action(&action);
-
-
 }
