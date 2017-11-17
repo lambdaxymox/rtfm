@@ -11,6 +11,14 @@ make install
 ```
 to build and install `rtfm`.
 
+## Uninstallation
+
+Go to the source root in terminal, and type
+```bash
+make uninstall
+```
+to uninstall the program.
+
 ## Dependencies
 
 The following dependencies are required to build the program.
