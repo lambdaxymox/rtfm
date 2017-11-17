@@ -66,8 +66,15 @@ fn run_fetch_manual(program_name: &str) {
     
     if let Ok(mut child) = command.spawn() {
         match child.wait() {
-            Ok(_) => {
-                println!("There, was that so difficult now?");
+            Ok(exit_code) => {
+                match exit_code.code() {
+                    Some(0) => {
+                        println!("There, was that so difficult now?");
+                    }
+                    Some(_) | None => {
+                        println!("Well fine, go RTFM somewhere else then!");
+                    }
+                }
             }
             Err(_) => {
                 println!("Well fine, go RTFM somewhere else then!");
