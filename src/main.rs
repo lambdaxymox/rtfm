@@ -45,8 +45,8 @@ enum TerminalAction {
 }
 
 fn run_help_page() {
-    println!("There is this wonderful thing you could \
-              try reading called the \"manual\".");
+    let i = rand::random::<usize>() % STRINGS.len();
+    println!("{}", STRINGS[i]);
     println!("HINT: try running `rtfm rtfm` or `man rtfm`.");
     println!("Or do I need to do this for you?");
 }
