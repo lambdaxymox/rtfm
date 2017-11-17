@@ -22,6 +22,7 @@
  */
 extern crate rand;
 
+use std::process;
 use std::env;
 
 
@@ -43,17 +44,6 @@ enum TerminalAction {
     HelpPage,
 }
 
-fn parse_args(args: &[String]) -> TerminalAction {
-    if args.len() < 2 {
-        return TerminalAction::DefaultMessage;
-    }
-    if args.contains(&String::from("--help")) || args.contains(&String::from("-h")) {
-        return TerminalAction::HelpPage;
-    }
-
-    TerminalAction::FetchManual(args[1].clone())
-}
-
 fn run_help_page() {
     println!("There is this wonderful thing you could \
               try reading called the \"manual\".");
@@ -67,7 +57,35 @@ fn run_default_message() {
 }
 
 fn run_fetch_manual(program_name: &str) {
-    unimplemented!();
+    println!("So you're having a problem with {}?", program_name);
+    println!("Let me RTFM that for you.");
+
+    let mut command = process::Command::new("man");
+    command.arg(&program_name);
+    
+    if let Ok(mut child) = command.spawn() {
+        match child.wait() {
+            Ok(_) => {
+                println!("There, was that so difficult now?");
+            }
+            Err(_) => {
+                println!("Well fine, go RTFM somewhere else then!");
+            }
+        }
+    } else {
+        println!("Well fine, go RTFM somewhere else then!");
+    }
+}
+
+fn parse_args(args: &[String]) -> TerminalAction {
+    if args.len() < 2 {
+        return TerminalAction::DefaultMessage;
+    }
+    if args.contains(&String::from("--help")) || args.contains(&String::from("-h")) {
+        return TerminalAction::HelpPage;
+    }
+
+    TerminalAction::FetchManual(args[1].clone())
 }
 
 fn run_action(action: &TerminalAction) {
