@@ -20,12 +20,12 @@ clean:
 default: all
 
 install:
-	cp "$(RTFM)" "$(INSTALL_PATH)/bin"
-	cp "$(DOCS)" "$(INSTALL_PATH)/share/man/man1"
+	@cp "$(RTFM)" "$(INSTALL_PATH)/bin"
+	@cp "$(DOCS)" "$(INSTALL_PATH)/share/man/man1"
 
 uninstall:
-	rm "$(INSTALL_PATH)/bin/$(BIN_TARGET)"
-	rm "$(INSTALL_PATH)/share/man/man1/$(DOC_TARGET)"
+	@rm "$(INSTALL_PATH)/bin/$(BIN_TARGET)"
+	@rm "$(INSTALL_PATH)/share/man/man1/$(DOC_TARGET)"
 
 
 $(RTFM):
