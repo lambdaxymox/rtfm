@@ -4,4 +4,4 @@ version = "1.0.5"
 authors = ["Stallmanifold <stallmanifold@gmail.com>"]
 
 [dependencies]
-rand = "0.3.18"
+rand = "0.4.2"
