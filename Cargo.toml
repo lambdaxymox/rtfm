@@ -5,3 +5,6 @@ authors = ["Stallmanifold <stallmanifold@gmail.com>"]
 
 [dependencies]
 rand = "0.4.2"
+
+[target.'cfg(windows)'.dependencies]
+winapi = { version = "0.3", features = ["winuser"] }

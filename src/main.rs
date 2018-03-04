@@ -22,6 +22,9 @@
  */
 extern crate rand;
 
+#[cfg(windows)]
+extern crate winapi;
+
 use std::process;
 use std::env;
 
