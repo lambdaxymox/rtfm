@@ -66,10 +66,11 @@ fn make_command(program_name: &str) -> Option<Command> {
                          .stdout(Stdio::piped())
                          .output();
 
-
-    if output.is_ok() {
-        if output.unwrap().success() {
-            // If help succeeds, that's the command we'll use.
+    if output.is_ok() && output.unwrap().success() {
+        let output = output.unwrap();
+        let string = Vec::from("This command is not supported by the help utility.  Try");
+        if output.stdout.starts_with(&string) || output.stderr.starts_with(&string) {
+            // If `help` succeeds, that's the command we'll use.
             return Some(Command::new("help").arg(program_name));
         }
     }
@@ -80,12 +81,10 @@ fn make_command(program_name: &str) -> Option<Command> {
                          .stdout(Stdio::piped())
                          .output();
 
-    if output.is_ok() {
-        if output.unwrap().success() {
-            // If calling the process with the '/?' flag succeeds, that's the 
-            // command we'll use.
-            return Some(Command::new(program_name).arg("/?"));
-        }
+    if output.is_ok() && output.unwrap().success() {
+        // If calling the process with the '/?' flag succeeds, that's the 
+        // command we'll use.
+        return Some(Command::new(program_name).arg("/?"));
     }
 
     // Otherwise, try calling the command with the "--help" flag.
@@ -95,14 +94,13 @@ fn make_command(program_name: &str) -> Option<Command> {
                          .stdout(Stdio::piped())
                          .output();
 
-    if output.is_ok() {
-        if output.unwrap().success() {
-            // If calling the process with the '/?' flag succeeds, that's the 
-            // command we'll use.
-            return Some(Command::new(program_name).arg("--help"));
-        }
+    if output.is_ok() && output.unwrap().success() {
+        // If calling the process with the '--help' flag succeeds, that's the 
+        // command we'll use.
+        return Some(Command::new(program_name).arg("--help"));
     }
 
+    // Failing that, we just give up.
     None
 }
 
@@ -119,15 +117,25 @@ fn run_fetch_manual(program_name: &str) {
     println!("So you're having a problem with {}?", program_name);
     println!("Let me RTFM that for you.");
 
-    let mut command = make_command(program_name);
+    let mut command = match make_command(program_name) {
+        Some(val) => val,
+        None => {
+            println!(
+                "Couldn't find a help page for {}. 
+                 You'll just have to RTFM somewhere else then.",
+                 program_name
+            );
+            return ();
+        }
+    };
     if let Ok(mut child) = command.spawn() {
         match child.wait() {
             Ok(exit_code) => {
-                match exit_code.code() {
-                    Some(0) => {
+                match exit_code.success() {
+                    true => {
                         println!("There, was that so difficult now?");
                     }
-                    Some(_) | None => {
+                    false => {
                         println!("Well fine, go RTFM somewhere else then!");
                     }
                 }
@@ -157,7 +165,6 @@ fn run_fetch_manual(program_name: &str) {
             return ();
         }
     };
-
     if let Ok(mut child) = command.spawn() {
         match child.wait() {
             Ok(exit_code) => {
