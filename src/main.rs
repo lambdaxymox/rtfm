@@ -4,7 +4,7 @@
  *    or a piece of third party software you may be working with.
  *    It will even issue a friendly reminder about how to use RTFM itself.
  *
- *    Copyright (C) 2017  Christopher Blanchard
+ *    Copyright (C) 2017-2018 Christopher Blanchard
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
