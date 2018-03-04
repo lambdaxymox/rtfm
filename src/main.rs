@@ -38,22 +38,6 @@ const STRINGS: [&str; 9] = [
     "There is this wonderful thing you could try reading called the \"manual\"."
 ];
 
-#[cfg(target_os = "windows")]
-fn make_command(program_name: &str) -> Command {
-    let mut command = Command::new("help");
-    command.arg(&program_name);
-
-    command
-}
-
-#[cfg(any(target_os = "linux", target_os = "macos"))]
-fn make_command(program_name: &str) -> Command {
-    let mut command = Command::new("man");
-    command.arg(&program_name);
-
-    command
-}
-
 #[derive(Clone, PartialEq, Eq)]
 enum TerminalAction {
     DefaultMessage,
@@ -73,11 +57,107 @@ fn run_default_message() {
     println!("{}", STRINGS[i]);
 }
 
+#[cfg(target_os = "windows")]
+fn make_command(program_name: &str) -> Option<Command> {
+    // First, try calling `help`.
+    let output = Command::new("help")
+                         .arg(program_name)
+                         .stdin(Stdio::null())
+                         .stdout(Stdio::piped())
+                         .output();
+
+
+    if output.is_ok() {
+        if output.unwrap().success() {
+            // If help succeeds, that's the command we'll use.
+            return Some(Command::new("help").arg(program_name));
+        }
+    }
+    // Otherwise, try calling the command with the '/?' flag.
+    let output = Command::new(program_name)
+                         .arg("/?")
+                         .stdin(Stdio::null())
+                         .stdout(Stdio::piped())
+                         .output();
+
+    if output.is_ok() {
+        if output.unwrap().success() {
+            // If calling the process with the '/?' flag succeeds, that's the 
+            // command we'll use.
+            return Some(Command::new(program_name).arg("/?"));
+        }
+    }
+
+    // Otherwise, try calling the command with the "--help" flag.
+    let output = Command::new(program_name)
+                         .arg("--help")
+                         .stdin(Stdio::null())
+                         .stdout(Stdio::piped())
+                         .output();
+
+    if output.is_ok() {
+        if output.unwrap().success() {
+            // If calling the process with the '/?' flag succeeds, that's the 
+            // command we'll use.
+            return Some(Command::new(program_name).arg("--help"));
+        }
+    }
+
+    None
+}
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+fn make_command(program_name: &str) -> Option<Command> {
+    let mut command = Command::new("man");
+    command.arg(&program_name);
+
+    Some(command)
+}
+
+#[cfg(target_os = "windows")]
 fn run_fetch_manual(program_name: &str) {
     println!("So you're having a problem with {}?", program_name);
     println!("Let me RTFM that for you.");
 
     let mut command = make_command(program_name);
+    if let Ok(mut child) = command.spawn() {
+        match child.wait() {
+            Ok(exit_code) => {
+                match exit_code.code() {
+                    Some(0) => {
+                        println!("There, was that so difficult now?");
+                    }
+                    Some(_) | None => {
+                        println!("Well fine, go RTFM somewhere else then!");
+                    }
+                }
+            }
+            Err(_) => {
+                println!("Well fine, go RTFM somewhere else then!");
+            }
+        }
+    } else {
+        println!("Well fine, go RTFM somewhere else then!");
+    }
+}
+
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+fn run_fetch_manual(program_name: &str) {
+    println!("So you're having a problem with {}?", program_name);
+    println!("Let me RTFM that for you.");
+
+    let mut command = match make_command(program_name) {
+        Some(val) => val,
+        None => {
+            println!(
+                "Couldn't find a help page for {}. 
+                 You'll just have to RTFM somewhere else.",
+                 program_name
+            );
+            return ();
+        }
+    };
+
     if let Ok(mut child) = command.spawn() {
         match child.wait() {
             Ok(exit_code) => {
