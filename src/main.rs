@@ -22,7 +22,7 @@
  */
 extern crate rand;
 
-use std::process;
+use std::process::Command;
 use std::env;
 
 
@@ -37,6 +37,15 @@ const STRINGS: [&str; 9] = [
     "Sudo read the friendly manual.",
     "There is this wonderful thing you could try reading called the \"manual\"."
 ];
+
+#[cfg(target_os = "windows")]
+fn make_command() -> Command {
+    Command::new("help")
+}
+
+fn make_command() -> Command {
+    Command::new("man")
+}
 
 #[derive(Clone, PartialEq, Eq)]
 enum TerminalAction {
@@ -61,7 +70,7 @@ fn run_fetch_manual(program_name: &str) {
     println!("So you're having a problem with {}?", program_name);
     println!("Let me RTFM that for you.");
 
-    let mut command = process::Command::new("man");
+    let mut command = make_command();
     command.arg(&program_name);
     
     if let Ok(mut child) = command.spawn() {
