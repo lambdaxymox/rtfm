@@ -1,0 +1,12 @@
+BUILD_ROOT = "$(MAKEDIR)\target"
+RELEASE_ROOT = "$(BUILD_ROOT)\release"
+BIN_TARGET = "rtfm.exe"
+RTFM = "$(RELEASE_ROOT)\$(BIN_TARGET)"
+
+all: $(BIN_TARGET)
+
+clean:
+	@cargo clean
+
+$(BIN_TARGET):
+	@cargo build --release

@@ -15,7 +15,6 @@ all: $(RTFM)
 
 clean:
 	@cargo clean
-	@rm -rf BUILD_ROOT
 
 default: all
 
