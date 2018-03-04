@@ -8,5 +8,13 @@ all: $(BIN_TARGET)
 clean:
 	@cargo clean
 
+install:
+	mkdir "%%PROGRAMFILES%%\rtfm"
+	copy /Y "$(RTFM)"" "%%PROGRAMFILES%%\rtfm"
+
+uninstall:
+	del /Q "%%PROGRAMFILES%%\rtfm"
+	rmdir /S /Q "%%PROGRAMFILES%%\rtfm"
+
 $(BIN_TARGET):
 	@cargo build --release
