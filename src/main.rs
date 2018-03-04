@@ -46,7 +46,7 @@ fn make_command(program_name: &str) -> Command {
     command
 }
 
-#[cfg(not(any(target_os = "windows")))]
+#[cfg(any(target_os = "linux", target_os = "macos"))]
 fn make_command(program_name: &str) -> Command {
     let mut command = Command::new("man");
     command.arg(&program_name);
