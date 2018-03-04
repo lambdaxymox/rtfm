@@ -39,13 +39,19 @@ const STRINGS: [&str; 9] = [
 ];
 
 #[cfg(target_os = "windows")]
-fn make_command() -> Command {
-    Command::new("help")
+fn make_command(program_name: &str) -> Command {
+    let mut command = Command::new("help");
+    command.arg(&program_name);
+
+    command
 }
 
 #[cfg(not(any(target_os = "windows")))]
-fn make_command() -> Command {
-    Command::new("man")
+fn make_command(program_name: &str) -> Command {
+    let mut command = Command::new("man");
+    command.arg(&program_name);
+
+    command
 }
 
 #[derive(Clone, PartialEq, Eq)]
@@ -71,9 +77,7 @@ fn run_fetch_manual(program_name: &str) {
     println!("So you're having a problem with {}?", program_name);
     println!("Let me RTFM that for you.");
 
-    let mut command = make_command();
-    command.arg(&program_name);
-    
+    let mut command = make_command(program_name);
     if let Ok(mut child) = command.spawn() {
         match child.wait() {
             Ok(exit_code) => {
