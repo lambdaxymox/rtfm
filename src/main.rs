@@ -25,6 +25,8 @@ extern crate rand;
 use std::process::Command;
 use std::env;
 
+#[cfg(target_os = "windows")]
+use std::process::Stdio;
 
 const STRINGS: [&str; 9] = [
     "RTFM!",
@@ -37,6 +39,7 @@ const STRINGS: [&str; 9] = [
     "Sudo read the friendly manual.",
     "There is this wonderful thing you could try reading called the \"manual\"."
 ];
+
 
 #[derive(Clone, PartialEq, Eq)]
 enum TerminalAction {
@@ -66,12 +69,19 @@ fn make_command(program_name: &str) -> Option<Command> {
                          .stdout(Stdio::piped())
                          .output();
 
-    if output.is_ok() && output.unwrap().success() {
-        let output = output.unwrap();
-        let string = Vec::from("This command is not supported by the help utility.  Try");
-        if output.stdout.starts_with(&string) || output.stderr.starts_with(&string) {
-            // If `help` succeeds, that's the command we'll use.
-            return Some(Command::new("help").arg(program_name));
+    if output.is_ok() {
+        let unwrapped = output.unwrap();
+        let success = !unwrapped.status.success();
+        if success {
+            let string = Vec::from("This command is not supported by the help utility.  Try");
+            if !(unwrapped.stdout.starts_with(&string)) ||
+                 !(unwrapped.stderr.starts_with(&string)
+            ) {
+                // If `help` succeeds, that's the command we'll use.
+                let mut command = Command::new("help");
+                command.arg(program_name);
+                return Some(command);
+            }
         }
     }
     // Otherwise, try calling the command with the '/?' flag.
@@ -81,10 +91,12 @@ fn make_command(program_name: &str) -> Option<Command> {
                          .stdout(Stdio::piped())
                          .output();
 
-    if output.is_ok() && output.unwrap().success() {
+    if output.is_ok() && output.unwrap().status.success() {
         // If calling the process with the '/?' flag succeeds, that's the 
         // command we'll use.
-        return Some(Command::new(program_name).arg("/?"));
+        let mut command = Command::new(program_name);
+        command.arg("/?");
+        return Some(command);
     }
 
     // Otherwise, try calling the command with the "--help" flag.
@@ -94,10 +106,12 @@ fn make_command(program_name: &str) -> Option<Command> {
                          .stdout(Stdio::piped())
                          .output();
 
-    if output.is_ok() && output.unwrap().success() {
+    if output.is_ok() && output.unwrap().status.success() {
         // If calling the process with the '--help' flag succeeds, that's the 
         // command we'll use.
-        return Some(Command::new(program_name).arg("--help"));
+        let mut command = Command::new(program_name);
+        command.arg("--help");
+        return Some(command);
     }
 
     // Failing that, we just give up.
@@ -121,7 +135,7 @@ fn run_fetch_manual(program_name: &str) {
         Some(val) => val,
         None => {
             println!(
-                "Couldn't find a help page for {}. 
+                "Couldn't find a help page for \"{}\". \
                  You'll just have to RTFM somewhere else then.",
                  program_name
             );
@@ -130,15 +144,8 @@ fn run_fetch_manual(program_name: &str) {
     };
     if let Ok(mut child) = command.spawn() {
         match child.wait() {
-            Ok(exit_code) => {
-                match exit_code.success() {
-                    true => {
-                        println!("There, was that so difficult now?");
-                    }
-                    false => {
-                        println!("Well fine, go RTFM somewhere else then!");
-                    }
-                }
+            Ok(_) => {
+                println!("There, was that so difficult now?");
             }
             Err(_) => {
                 println!("Well fine, go RTFM somewhere else then!");
