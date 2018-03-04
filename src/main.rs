@@ -43,6 +43,7 @@ fn make_command() -> Command {
     Command::new("help")
 }
 
+#[cfg(not(any(target_os = "windows")))]
 fn make_command() -> Command {
     Command::new("man")
 }
