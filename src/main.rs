@@ -28,12 +28,13 @@ use std::env;
 #[cfg(target_os = "windows")]
 use std::process::Stdio;
 
-const STRINGS: [&str; 9] = [
+const STRINGS: [&str; 10] = [
     "RTFM!",
     "RTFM Noob!",
     "Seriously, RTFM!",
     "RTFM Already!",
     "Argh! Just RTFM! Do it NOW!",
+    "RTFM Something', will ya!",
     "Nyaaaagh! The manual, read it now!",
     "Sudo read the manual.",
     "Sudo read the friendly manual.",
