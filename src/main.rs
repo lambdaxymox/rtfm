@@ -24,11 +24,15 @@ extern crate rand;
 
 use std::process::Command;
 use std::env;
+use std::path::Path;
+use std::fs::File;
+use std::io;
+use std::io::Write;
 
 #[cfg(target_os = "windows")]
 use std::process::Stdio;
 
-const STRINGS: [&str; 10] = [
+const INSULTS: [&str; 10] = [
     "RTFM!",
     "RTFM Noob!",
     "Seriously, RTFM!",
@@ -41,6 +45,8 @@ const STRINGS: [&str; 10] = [
     "There is this wonderful thing you could try reading called the \"manual\"."
 ];
 
+const CONFIG_FILE: &str = "rtfm.toml";
+
 
 #[derive(Clone, PartialEq, Eq)]
 enum Action {
@@ -51,15 +57,15 @@ enum Action {
 }
 
 fn run_help_page() {
-    let i = rand::random::<usize>() % STRINGS.len();
-    println!("{}", STRINGS[i]);
+    let i = rand::random::<usize>() % INSULTS.len();
+    println!("{}", INSULTS[i]);
     println!("HINT: `rtfm rtfm` or `man rtfm`.");
     println!("Or do I need to do this for you?");
 }
 
 fn run_default_message() {
-    let i = rand::random::<usize>() % STRINGS.len();
-    println!("{}", STRINGS[i]);
+    let i = rand::random::<usize>() % INSULTS.len();
+    println!("{}", INSULTS[i]);
 }
 
 #[cfg(target_os = "windows")]
@@ -234,7 +240,47 @@ fn run_action(action: &Action) {
     }
 }
 
+fn make_default_config(file_name: &str, insults: &[&str]) -> io::Result<()> {
+    let home = env::var("HOME").unwrap();
+    let file_string = format!("{}/.config/{}", &home, file_name);
+    let file_path = Path::new(&file_string);
+    let mut config_file = File::create(file_path)?;
+    
+    config_file.write(b"# Place your insults here\n")?;
+    config_file.write(b"[insults]\n")?;
+    for string in insults.iter() {
+        config_file.write(string.as_ref())?;
+        config_file.write(b"\n")?;
+    }
+
+    config_file.write(b"\n")?;
+    
+    Ok(())
+}
+
+fn config_exists() -> bool {
+    let home = env::var("HOME").unwrap();
+    let config_path = format!("{}/.config/{}", &home, CONFIG_FILE);
+    let config_file = Path::new(&config_path);
+    if config_file.exists() {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 fn main() {
+    if !config_exists() {
+        println!("Config file does not exist! How am I supposed to insult you?");
+        println!("I know! I will generate a default.");
+        make_default_config(CONFIG_FILE, &INSULTS).unwrap();
+        let home = env::var("HOME").unwrap();
+        let file_name = "rtfm.toml";
+        let file_path = format!("{}/.config/{}", &home, file_name);
+        println!("Default configuration generated at {}", file_path);
+        println!("YOU CAN'T TRICK ME.");
+    }
+
     let args: Vec<String> = env::args().collect();
     let action = parse_args(&args);
     run_action(&action);
