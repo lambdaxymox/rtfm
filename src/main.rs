@@ -223,13 +223,13 @@ fn run_action(action: &Action) {
             run_default_message();
         }
         &Action::FetchManual(ref program_name) => {
-            run_fetch_manual(&program_name)
+            run_fetch_manual(&program_name);
         }
         &Action::HelpPage => {
-            run_help_page()
+            run_help_page();
         }
         &Action::PrivacyPolicy => {
-            run_privacy_policy()
+            run_privacy_policy();
         }
     }
 }
