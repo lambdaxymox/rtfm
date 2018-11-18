@@ -43,7 +43,7 @@ const STRINGS: [&str; 10] = [
 
 
 #[derive(Clone, PartialEq, Eq)]
-enum TerminalAction {
+enum Action {
     DefaultMessage,
     FetchManual(String),
     HelpPage,
@@ -194,26 +194,26 @@ fn run_fetch_manual(program_name: &str) {
     }
 }
 
-fn parse_args(args: &[String]) -> TerminalAction {
+fn parse_args(args: &[String]) -> Action {
     if args.len() < 2 {
-        return TerminalAction::DefaultMessage;
+        return Action::DefaultMessage;
     }
     if args.contains(&String::from("--help")) || args.contains(&String::from("-h")) {
-        return TerminalAction::HelpPage;
+        return Action::HelpPage;
     }
 
-    TerminalAction::FetchManual(args[1].clone())
+    Action::FetchManual(args[1].clone())
 }
 
-fn run_action(action: &TerminalAction) {
+fn run_action(action: &Action) {
     match action {
-        &TerminalAction::DefaultMessage => {
+        &Action::DefaultMessage => {
             run_default_message();
         }
-        &TerminalAction::FetchManual(ref program_name) => {
+        &Action::FetchManual(ref program_name) => {
             run_fetch_manual(&program_name)
         }
-        &TerminalAction::HelpPage => {
+        &Action::HelpPage => {
             run_help_page()
         }
     }
