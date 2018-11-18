@@ -47,6 +47,7 @@ enum Action {
     DefaultMessage,
     FetchManual(String),
     HelpPage,
+    PrivacyPolicy,
 }
 
 fn run_help_page() {
@@ -194,10 +195,21 @@ fn run_fetch_manual(program_name: &str) {
     }
 }
 
+fn run_privacy_policy() {
+    println!("RTFM PRIVACY POLICY");
+    println!("This ain't Google. RTFM doesn't collect your data.");
+    println!("END PRIVACY POLICY")
+}
+
 fn parse_args(args: &[String]) -> Action {
     if args.len() < 2 {
         return Action::DefaultMessage;
     }
+
+    if args.contains(&String::from("--privacy-policy")) {
+        return Action::PrivacyPolicy;
+    }
+
     if args.contains(&String::from("--help")) || args.contains(&String::from("-h")) {
         return Action::HelpPage;
     }
@@ -215,6 +227,9 @@ fn run_action(action: &Action) {
         }
         &Action::HelpPage => {
             run_help_page()
+        }
+        &Action::PrivacyPolicy => {
+            run_privacy_policy()
         }
     }
 }
