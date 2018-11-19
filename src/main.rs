@@ -21,16 +21,22 @@
  *
  */
 extern crate rand;
+extern crate serde;
+extern crate toml;
+
+#[macro_use]
+extern crate serde_derive;
 
 use std::process::Command;
 use std::env;
 use std::path::Path;
 use std::fs::File;
 use std::io;
-use std::io::Write;
+use std::io::{Read, Write};
 
 #[cfg(target_os = "windows")]
 use std::process::Stdio;
+
 
 const INSULTS: [&str; 10] = [
     "RTFM!",
@@ -273,6 +279,33 @@ fn config_exists() -> bool {
     }
 }
 
+#[derive(Clone, Deserialize, Serialize)]
+struct Config {
+    insults: Vec<String>,
+}
+
+impl Config {
+    fn load<P: AsRef<Path>>(path: P) -> Option<Config> {
+        let mut file = match File::open(path) {
+            Ok(val) => val,
+            Err(_) => return None,
+        };
+
+        let mut content = String::new();
+        let _bytes_read = match file.read_to_string(&mut content) {
+            Ok(val) => val,
+            Err(_) => return None,
+        };
+
+        let config = match toml::from_str(&content) {
+            Ok(val) => val,
+            Err(_) => return None,
+        };
+
+        Some(config)
+    }
+}
+
 fn main() {
     if !config_exists() {
         println!("Config file does not exist! How am I supposed to insult you?");
@@ -281,6 +314,9 @@ fn main() {
         let file_path = config_path(CONFIG_FILE);
         println!("Default configuration generated at {}", file_path);
     }
+
+    let file_path = config_path(CONFIG_FILE);
+    let config = Config::load(&file_path);
 
     let args: Vec<String> = env::args().collect();
     let action = parse_args(&args);
