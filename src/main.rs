@@ -307,17 +307,15 @@ impl Config {
 }
 
 fn main() {
+    let file_path = config_path(CONFIG_FILE);
     if !config_exists() {
         println!("Config file does not exist! How am I supposed to insult you?");
         println!("I know! I will generate a default.");
         make_default_config(CONFIG_FILE, &INSULTS).unwrap();
-        let file_path = config_path(CONFIG_FILE);
         println!("Default configuration generated at {}", file_path);
     }
 
-    let file_path = config_path(CONFIG_FILE);
     let config = Config::load(&file_path);
-
     let args: Vec<String> = env::args().collect();
     let action = parse_args(&args);
     run_action(&action);
