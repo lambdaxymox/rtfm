@@ -44,7 +44,7 @@ const INSULTS: [&str; 10] = [
     "Seriously, RTFM!",
     "RTFM Already!",
     "Argh! Just RTFM! Do it NOW!",
-    "RTFM Something', will ya!",
+    "RTFM Somethin', will ya!",
     "Nyaaaagh! The manual, read it now!",
     "Sudo read the manual.",
     "Sudo read the friendly manual.",
@@ -62,16 +62,16 @@ enum Action {
     PrivacyPolicy,
 }
 
-fn run_help_page() {
-    let i = rand::random::<usize>() % INSULTS.len();
-    println!("{}", INSULTS[i]);
+fn run_help_page(config: &Config) {
+    let i = rand::random::<usize>() % config.insults.len();
+    println!("{}", config.insults[i]);
     println!("HINT: `rtfm rtfm` or `man rtfm`.");
     println!("Or do I need to do this for you?");
 }
 
-fn run_default_message() {
-    let i = rand::random::<usize>() % INSULTS.len();
-    println!("{}", INSULTS[i]);
+fn run_default_message(config: &Config) {
+    let i = rand::random::<usize>() % config.insults.len();
+    println!("{}", config.insults[i]);
 }
 
 #[cfg(target_os = "windows")]
@@ -229,16 +229,16 @@ fn parse_args(args: &[String]) -> Action {
     Action::FetchManual(args[1].clone())
 }
 
-fn run_action(action: &Action) {
+fn run_action(action: &Action, config: &Config) {
     match action {
         &Action::DefaultMessage => {
-            run_default_message();
+            run_default_message(config);
         }
         &Action::FetchManual(ref program_name) => {
             run_fetch_manual(&program_name);
         }
         &Action::HelpPage => {
-            run_help_page();
+            run_help_page(config);
         }
         &Action::PrivacyPolicy => {
             run_privacy_policy();
@@ -257,13 +257,14 @@ fn make_default_config(file_name: &str, insults: &[&str]) -> io::Result<()> {
     let mut config_file = File::create(file_path)?;
     
     config_file.write(b"# Place your insults here\n")?;
-    config_file.write(b"[insults]\n")?;
+    config_file.write(b"insults = [\n")?;
     for string in insults.iter() {
+        config_file.write(b"    \"")?;
         config_file.write(string.as_ref())?;
-        config_file.write(b"\n")?;
+        config_file.write(b"\",\n")?;
     }
 
-    config_file.write(b"\n")?;
+    config_file.write(b"]\n")?;
     
     Ok(())
 }
@@ -315,8 +316,8 @@ fn main() {
         println!("Default configuration generated at {}", file_path);
     }
 
-    let config = Config::load(&file_path);
+    let config = Config::load(&file_path).unwrap();
     let args: Vec<String> = env::args().collect();
     let action = parse_args(&args);
-    run_action(&action);
+    run_action(&action, &config);
 }
