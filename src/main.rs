@@ -240,9 +240,13 @@ fn run_action(action: &Action) {
     }
 }
 
-fn make_default_config(file_name: &str, insults: &[&str]) -> io::Result<()> {
+fn config_path(file_name: &str) -> String {
     let home = env::var("HOME").unwrap();
-    let file_string = format!("{}/.config/{}", &home, file_name);
+    format!("{}/.config/{}", &home, file_name)
+}
+
+fn make_default_config(file_name: &str, insults: &[&str]) -> io::Result<()> {
+    let file_string = config_path(file_name);
     let file_path = Path::new(&file_string);
     let mut config_file = File::create(file_path)?;
     
@@ -274,11 +278,8 @@ fn main() {
         println!("Config file does not exist! How am I supposed to insult you?");
         println!("I know! I will generate a default.");
         make_default_config(CONFIG_FILE, &INSULTS).unwrap();
-        let home = env::var("HOME").unwrap();
-        let file_name = "rtfm.toml";
-        let file_path = format!("{}/.config/{}", &home, file_name);
+        let file_path = config_path(CONFIG_FILE);
         println!("Default configuration generated at {}", file_path);
-        println!("YOU CAN'T TRICK ME.");
     }
 
     let args: Vec<String> = env::args().collect();
